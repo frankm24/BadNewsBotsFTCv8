@@ -19,7 +19,7 @@ import badnewsbots.pipelines.SignalSleevePipeline;
 import badnewsbots.robots.PowerPlayCompBot;
 
 @Autonomous
-public class AutoRed1ParkingOnly extends LinearOpMode {
+public final class AutoRed1ParkingOnly extends LinearOpMode {
 
     private PowerPlayCompBot robot;
     private GamepadEx smartGamepad;

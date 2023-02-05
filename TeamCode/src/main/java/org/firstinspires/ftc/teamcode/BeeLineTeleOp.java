@@ -10,7 +10,7 @@ import badnewsbots.robots.BeeLineChassis;
 
 @Disabled
 @TeleOp
-public class BeeLineTeleOp extends LinearOpMode {
+public final class BeeLineTeleOp extends LinearOpMode {
     // Robot object
     private BeeLineChassis robot;
 

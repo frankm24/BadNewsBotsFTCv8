@@ -11,7 +11,7 @@ import java.util.ListIterator;
 import badnewsbots.hardware.GamepadEx;
 
 @TeleOp(group = "Testing")
-public class EpicServoTest extends LinearOpMode {
+public final class EpicServoTest extends LinearOpMode {
     private Servo servo;
     private Servo servo1;
     private GamepadEx smartGamepad;

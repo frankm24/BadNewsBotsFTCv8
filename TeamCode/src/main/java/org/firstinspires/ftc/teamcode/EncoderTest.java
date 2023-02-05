@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 
 @Disabled
 @TeleOp(group = "Testing")
-public class EncoderTest extends LinearOpMode {
+public final class EncoderTest extends LinearOpMode {
 
     private DcMotor back_left;
 

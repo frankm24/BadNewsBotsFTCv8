@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.ServoController;
 
 @Disabled
 @TeleOp
-public class ServoTest extends LinearOpMode {
+public final class ServoTest extends LinearOpMode {
 
     private Servo servo;
 

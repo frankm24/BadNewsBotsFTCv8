@@ -13,7 +13,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import badnewsbots.hardware.RotatingClaw;
 
-public class PowerPlayCompBot {
+public final class PowerPlayCompBot {
     // OOP
     private OpMode opMode;
     private HardwareMap hardwareMap;

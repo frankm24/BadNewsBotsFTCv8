@@ -14,7 +14,7 @@ import badnewsbots.hardware.RotatingClaw;
 import badnewsbots.robots.PowerPlayCompBot;
 
 @TeleOp
-public class PowerPlayTeleOp extends LinearOpMode {
+public final class PowerPlayTeleOp extends LinearOpMode {
     // Robot object
     private PowerPlayCompBot robot;
 

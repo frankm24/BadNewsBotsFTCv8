@@ -1,3 +1,6 @@
+package badnewsbots;
+class i2cTest {
+}
 /*
 Modern Robotics Range Sensor Example
 Created 9/8/2016 by Colton Mehlhoff of Modern Robotics using FTC SDK 2.x Beta
@@ -11,7 +14,7 @@ This program can be run without a battery and Power Destitution Module.
 For more information, visit modernroboticsedu.com.
 Support is available by emailing support@modernroboticsinc.com.
 */
-
+/*
 package badnewsbots;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -19,7 +22,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
 
 @TeleOp(name = "Range", group = "MRI")
 public class i2cTest extends OpMode {
@@ -54,3 +56,4 @@ public class i2cTest extends OpMode {
     }
 
 }
+*/

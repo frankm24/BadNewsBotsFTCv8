@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class BeeLineChassis {
+public final class BeeLineChassis {
     // OOP
     OpMode opMode;
     HardwareMap hardwareMap;

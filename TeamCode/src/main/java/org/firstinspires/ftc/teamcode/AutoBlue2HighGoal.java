@@ -20,7 +20,7 @@ import badnewsbots.pipelines.SignalSleevePipeline;
 import badnewsbots.robots.PowerPlayCompBot;
 
 @Autonomous
-public class AutoBlue2HighGoal extends LinearOpMode {
+public final class AutoBlue2HighGoal extends LinearOpMode {
 
     private PowerPlayCompBot robot;
     private GamepadEx smartGamepad;

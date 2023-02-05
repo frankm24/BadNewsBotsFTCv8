@@ -20,7 +20,7 @@ import java.util.List;
 
 import badnewsbots.slam.UltrasonicSensor;
 
-public class AutonomousTestingBot {
+public final class AutonomousTestingBot {
     // OOP
     OpMode opMode;
     HardwareMap hardwareMap;

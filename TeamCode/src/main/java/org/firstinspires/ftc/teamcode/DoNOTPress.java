@@ -16,7 +16,7 @@ import badnewsbots.pipelines.SignalSleevePipeline;
 import badnewsbots.robots.PowerPlayCompBot;
 
 @Autonomous
-public class DoNOTPress extends LinearOpMode {
+public final class DoNOTPress extends LinearOpMode {
 
     private PowerPlayCompBot robot;
     private GamepadEx smartGamepad;

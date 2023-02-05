@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-public class RingBot {
+public final class RingBot {
     // OOP
     OpMode opMode;
     HardwareMap hardwareMap;

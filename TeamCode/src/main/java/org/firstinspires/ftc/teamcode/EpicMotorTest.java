@@ -11,7 +11,7 @@ import java.util.List;
 import badnewsbots.hardware.GamepadEx;
 
 @TeleOp(group = "Testing")
-public class EpicMotorTest extends LinearOpMode {
+public final class EpicMotorTest extends LinearOpMode {
     private DcMotorEx motor;
     private DcMotorEx motor1;
     private GamepadEx smartGamepad;

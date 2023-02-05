@@ -28,7 +28,7 @@ import badnewsbots.robots.RingBot;
 
 @Disabled
 @TeleOp
-public class RingBotControl extends LinearOpMode {
+public final class RingBotControl extends LinearOpMode {
     // Robot object
     RingBot ringBot;
 

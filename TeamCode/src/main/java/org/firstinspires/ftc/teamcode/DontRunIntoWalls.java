@@ -34,7 +34,7 @@ import badnewsbots.slam.UltrasonicSensor;
 
 @Disabled
 @TeleOp
-public class DontRunIntoWalls extends LinearOpMode {
+public final class DontRunIntoWalls extends LinearOpMode {
     // Robot object
     AutonomousTestingBot robot;
     FTC_TFLiteObjectDetector ftcTfLiteObjectDetector;
