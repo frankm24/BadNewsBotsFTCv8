@@ -13,29 +13,32 @@ public class LinearSlide {
     private int adjustedMaxPosition;
 
     public LinearSlide(DcMotorEx motor, float lengthIn, int lengthTicks, boolean negateTicks) {
-        this.LENGTH_IN = lengthIn;
-        this.LENGTH_TICKS = lengthTicks;
-        this.MOTOR_TICKS_PER_INCH = LENGTH_TICKS / LENGTH_IN;
         this.motor = motor;
         if (negateTicks) {
             encoderDirection = -1;}
         else {
             encoderDirection = 1;}
-        adjustedZeroPosition = motor.getCurrentPosition();
+        this.LENGTH_IN = lengthIn;
+        this.LENGTH_TICKS = lengthTicks;
+        this.MOTOR_TICKS_PER_INCH = LENGTH_TICKS / LENGTH_IN;
         zero();
         //motor.setTargetPositionTolerance(0); // test if works once it works normally
     }
 
     public void zero() {
         adjustedZeroPosition = motor.getCurrentPosition();
-        adjustedMaxPosition = LENGTH_TICKS + adjustedZeroPosition;
+        adjustedMaxPosition = encoderDirection * LENGTH_TICKS + adjustedZeroPosition;
     }
 
     // Tell the slide to move to a given position in ticks
     public void moveToPositionTicks(int positionTicks) {
-        positionTicks = Math.max(adjustedZeroPosition, Math.min(positionTicks, adjustedMaxPosition));
-        motor.setTargetPosition(encoderDirection * positionTicks);
-        motor.setPower(0.5);
+        if (adjustedZeroPosition > adjustedMaxPosition) {
+            positionTicks = Math.min(adjustedZeroPosition, Math.max(positionTicks, adjustedMaxPosition));
+        } else {
+            positionTicks = Math.max(adjustedZeroPosition, Math.min(positionTicks, adjustedMaxPosition));
+        }
+        motor.setTargetPosition(positionTicks);
+        motor.setPower(1);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 

@@ -51,11 +51,11 @@ public class RotatingClaw {
         this.gripperServo = hardwareMap.get(Servo.class, "gripper");
         this.wristServo = hardwareMap.get(Servo.class, "wrist");
         //DcMotorEx slideMotor1 = hardwareMap.get(DcMotorEx.class, "linearSlide1");
-        DcMotorEx slideMotor2 = hardwareMap.get(DcMotorEx.class, "linearSlide2");
+        DcMotorEx slideMotor2 = hardwareMap.get(DcMotorEx.class, "linearSlide1");
         // TODO: Test and maybe change length to 38 1/8 inches instead if values inaccurate
         // 97.3cm long
         //this.linearSlide1 = new LinearSlide(slideMotor1, 38.30709f, 3251, false);
-        this.linearSlide2 = new LinearSlide(slideMotor2, 38.30709f, 3251, false);
+        this.linearSlide2 = new LinearSlide(slideMotor2, 38.30709f, 3251, true);
         //RevTouchSensor touchSensor =  hardwareMap.get(RevTouchSensor.class, "slide2ZeroLimit");
         //this.zeroLimitSwitch = new LimitSwitch(touchSensor, telemetry);
 
@@ -141,6 +141,7 @@ public class RotatingClaw {
     public int getSlide2PosTicks() {
         return linearSlide2.getMotor().getCurrentPosition();
     }
+    public int getSlide2TargetPosTicks() {return linearSlide2.getMotor().getTargetPosition();}
     public SlideHeight getCurrentSlideHeight() {return currentSlideHeight;}
     public GripperState getCurrentGripperState() {return currentGripperState;}
 }

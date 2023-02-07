@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraException;
 import org.openftc.easyopencv.OpenCvPipeline;
+import org.openftc.easyopencv.OpenCvViewport;
 
 import java.util.Arrays;
 
@@ -46,7 +47,7 @@ public final class AutoBlue2HighGoal extends LinearOpMode {
 
         initializeAutonomousTrajectories();
 
-        camera = robot.getCamera();
+        camera = robot.getLeftCamera();
         smartGamepad = new GamepadEx(gamepad1);
         ftcDashboard = FtcDashboard.getInstance();
 
@@ -121,7 +122,7 @@ public final class AutoBlue2HighGoal extends LinearOpMode {
                 //ftcDashboard.getTelemetry().addLine("Camera stream initialized");
                 telemetry.update();
                 camera.startStreaming(640, 480);
-                //ftcDashboard.startCameraStream(camera, 30);
+                ftcDashboard.startCameraStream(camera, 30);
             }
             @Override
             public void onError(int errorCode) {

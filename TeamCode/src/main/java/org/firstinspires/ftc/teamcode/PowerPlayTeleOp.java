@@ -68,6 +68,7 @@ public final class PowerPlayTeleOp extends LinearOpMode {
             telemetry.addData("Claw state", claw.getCurrentGripperState());
             telemetry.addData("Claw preset height", claw.getCurrentSlideHeight());
             telemetry.addData("Slide position", claw.getSlide2PosTicks());
+            telemetry.addData("Slide target position", claw.getSlide2TargetPosTicks());
             telemetry.addData("front left power", front_leftPower);
             telemetry.addData("back left power", back_leftPower);
             telemetry.addData("front right power", front_rightPower);

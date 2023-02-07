@@ -45,7 +45,7 @@ public final class AutoRed1ParkingOnly extends LinearOpMode {
 
         initializeAutonomousTrajectories();
 
-        camera = robot.getCamera();
+        camera = robot.getRightCamera();
         smartGamepad = new GamepadEx(gamepad1);
         ftcDashboard = FtcDashboard.getInstance();
 
@@ -105,7 +105,7 @@ public final class AutoRed1ParkingOnly extends LinearOpMode {
                 //ftcDashboard.getTelemetry().addLine("Camera stream initialized");
                 telemetry.update();
                 camera.startStreaming(640, 480);
-                //ftcDashboard.startCameraStream(camera, 30);
+                ftcDashboard.startCameraStream(camera, 30);
             }
             @Override
             public void onError(int errorCode) {

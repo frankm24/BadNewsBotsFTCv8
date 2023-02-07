@@ -22,7 +22,8 @@ public final class PowerPlayCompBot {
     public final double length = 15.0;
     public final double width = 14.6;
     private final PowerPlayCompBotMecanumDrive drive;
-    private final OpenCvWebcam camera;
+    private final OpenCvWebcam rightCamera;
+    private final OpenCvWebcam leftCamera;
 
     // Mechanisms
     private final RotatingClaw rotatingClaw;
@@ -50,15 +51,21 @@ public final class PowerPlayCompBot {
         drive = new PowerPlayCompBotMecanumDrive(hardwareMap);
 
         rotatingClaw = new RotatingClaw(hardwareMap, telemetry);
-        // Other
-        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
-        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
+        // Cameras
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        WebcamName webcamName1 = hardwareMap.get(WebcamName.class, "Webcam 1");
+        leftCamera = OpenCvCameraFactory.getInstance().createWebcam(webcamName1);
+
+        WebcamName webcamName2 = hardwareMap.get(WebcamName.class, "Webcam 2");
+        rightCamera = OpenCvCameraFactory.getInstance().createWebcam(webcamName2);
+
         //telemetry.addLine("Robot object created");
         //telemetry.update();
     }
 
     public PowerPlayCompBotMecanumDrive getDrive() {return drive;}
-    public OpenCvWebcam getCamera() {return camera;}
+    public OpenCvWebcam getLeftCamera() {return leftCamera;}
+    public OpenCvWebcam getRightCamera() {return rightCamera;}
     public RotatingClaw getRotatingClaw() {return rotatingClaw;}
 
 }

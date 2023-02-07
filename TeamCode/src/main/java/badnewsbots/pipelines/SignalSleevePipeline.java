@@ -49,8 +49,8 @@ public class SignalSleevePipeline extends OpenCvPipeline {
     private final Point point2Right = new Point(450, 480);
     private final Rect roiRight = new Rect(point1Right, point2Right);
 
-    private final Point point1Left = new Point(0, 0);
-    private final Point point2Left = new Point(100, 100);
+    private final Point point1Left = new Point(280, 360);
+    private final Point point2Left = new Point(450, 480);
     private final Rect roiLeft = new Rect(point1Left, point2Left);
     private final Rect roiToUse;
 

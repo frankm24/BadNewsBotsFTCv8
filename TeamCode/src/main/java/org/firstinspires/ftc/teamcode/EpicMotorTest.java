@@ -25,8 +25,8 @@ public final class EpicMotorTest extends LinearOpMode {
     }
     private TestMode currentTestMode;
 
-    private final int minTicks = 100;
-    private final int maxTicks = 3251;
+    private final int minTicks = -3251;
+    private final int maxTicks = 0;
 
     @Override
     public void runOpMode() {
@@ -34,7 +34,7 @@ public final class EpicMotorTest extends LinearOpMode {
         motor = hardwareMap.get(DcMotorEx.class, "linearSlide1");
         motor1 = hardwareMap.get(DcMotorEx.class, "linearSlide2");
         //motorsToTest.add(motor);
-        motorsToTest.add(motor1);
+        motorsToTest.add(motor);
 
         motorPower = 0;
         motorTargetPosition = 0;

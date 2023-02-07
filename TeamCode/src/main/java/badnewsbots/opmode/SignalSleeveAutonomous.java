@@ -40,7 +40,7 @@ public abstract class SignalSleeveAutonomous extends LinearOpMode {
 
         initializeAutonomousTrajectories();
 
-        camera = robot.getCamera();
+        camera = robot.getRightCamera();
         smartGamepad = new GamepadEx(gamepad1);
         ftcDashboard = FtcDashboard.getInstance();
 
