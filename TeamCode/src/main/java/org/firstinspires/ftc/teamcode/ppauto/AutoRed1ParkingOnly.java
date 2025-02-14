@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.ppauto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -13,13 +14,14 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.Arrays;
 
+import badnewsbots.InterOpStorage;
 import badnewsbots.hardware.GamepadEx;
 import badnewsbots.hardware.RotatingClaw;
 import badnewsbots.pipelines.SignalSleevePipeline;
 import badnewsbots.robots.PowerPlayCompBot;
 
 @Autonomous
-public final class AutoRed2ParkingOnly extends LinearOpMode {
+public final class AutoRed1ParkingOnly extends LinearOpMode {
 
     private PowerPlayCompBot robot;
     private GamepadEx smartGamepad;
@@ -32,10 +34,10 @@ public final class AutoRed2ParkingOnly extends LinearOpMode {
     private final double tileSize = 23.5;
     private OpenCvCamera camera;
 
-    private TrajectorySequence redAutoParking2_1;
-    private TrajectorySequence redAutoParking2_2;
-    private TrajectorySequence redAutoParking2_3;
-    private Pose2d redStartPose2;
+    private TrajectorySequence redAutoParking1_1;
+    private TrajectorySequence redAutoParking1_2;
+    private TrajectorySequence redAutoParking1_3;
+    private Pose2d redStartPose1;
 
     @Override
     public void runOpMode() {
@@ -48,9 +50,12 @@ public final class AutoRed2ParkingOnly extends LinearOpMode {
         camera = robot.getRightCamera();
         smartGamepad = new GamepadEx(gamepad1);
         ftcDashboard = FtcDashboard.getInstance();
+        telemetry = new MultipleTelemetry(telemetry, ftcDashboard.getTelemetry());
 
         SignalSleevePipeline pipeline = new SignalSleevePipeline(SignalSleevePipeline.CameraOrientation.RIGHT);
         initOpenCV(pipeline);
+
+        InterOpStorage.alliance = InterOpStorage.Alliance.RED;
 
         while (!isStarted() && !isStopRequested()) {
             coneOrientation = pipeline.getConeOrientation();
@@ -59,36 +64,39 @@ public final class AutoRed2ParkingOnly extends LinearOpMode {
             telemetry.addData("Cone filter averages: (G, M, O)", Arrays.toString(colorFilterAverages));
             telemetry.addData("Cone orientation: ", coneOrientation);
             telemetry.addData("FPS: ", camera.getFps());
+            telemetry.addData("left camera plugged in?", robot.isLeftCameraPluggedIn());
+            telemetry.addData("right camera plugged in?", robot.isRightCameraPluggedIn());
             telemetry.update();
             idle();
         }
 
-        drive.setPoseEstimate(redStartPose2);
+        drive.setPoseEstimate(redStartPose1);
         claw.grip();
         if (coneOrientation == SignalSleevePipeline.ConeOrientation.ONE) {
-            drive.followTrajectorySequence(redAutoParking2_1);
+            drive.followTrajectorySequence(redAutoParking1_1);
         }
         if (coneOrientation == SignalSleevePipeline.ConeOrientation.TWO) {
-            drive.followTrajectorySequence(redAutoParking2_2);
+            drive.followTrajectorySequence(redAutoParking1_2);
         }
         if (coneOrientation == SignalSleevePipeline.ConeOrientation.THREE) {
-            drive.followTrajectorySequence(redAutoParking2_3);
+            drive.followTrajectorySequence(redAutoParking1_3);
         }
+        InterOpStorage.currentPose = drive.getPoseEstimate();
     }
 
     private void initializeAutonomousTrajectories() {
-        redStartPose2 = new Pose2d(1.5 * tileSize, -3 * tileSize + robot.width/2, Math.toRadians(180));
+        redStartPose1 = new Pose2d(-1.5 * tileSize, -3 * tileSize + robot.width/2, Math.toRadians(180));
 
-        redAutoParking2_1 = drive.trajectorySequenceBuilder(redStartPose2)
+        redAutoParking1_1 = drive.trajectorySequenceBuilder(redStartPose1)
                 .forward(tileSize)
                 .strafeRight(1.5*tileSize)
                 .build();
 
-        redAutoParking2_2 = drive.trajectorySequenceBuilder(redStartPose2)
+        redAutoParking1_2 = drive.trajectorySequenceBuilder(redStartPose1)
                 .strafeRight(2*tileSize)
                 .build();
 
-        redAutoParking2_3 = drive.trajectorySequenceBuilder(redStartPose2)
+        redAutoParking1_3 = drive.trajectorySequenceBuilder(redStartPose1)
                 .back(tileSize)
                 .strafeRight(1.5*tileSize)
                 .build();
@@ -114,4 +122,3 @@ public final class AutoRed2ParkingOnly extends LinearOpMode {
         });
     }
 }
-

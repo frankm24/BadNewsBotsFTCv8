@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.ppauto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -11,17 +11,17 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraException;
 import org.openftc.easyopencv.OpenCvPipeline;
-import org.openftc.easyopencv.OpenCvViewport;
 
 import java.util.Arrays;
 
+import badnewsbots.InterOpStorage;
 import badnewsbots.hardware.GamepadEx;
 import badnewsbots.hardware.RotatingClaw;
 import badnewsbots.pipelines.SignalSleevePipeline;
 import badnewsbots.robots.PowerPlayCompBot;
 
 @Autonomous
-public final class AutoBlue2HighGoal extends LinearOpMode {
+public final class AutoBlue1ParkingOnly extends LinearOpMode {
 
     private PowerPlayCompBot robot;
     private GamepadEx smartGamepad;
@@ -34,10 +34,10 @@ public final class AutoBlue2HighGoal extends LinearOpMode {
     private final double tileSize = 23.5;
     private OpenCvCamera camera;
 
-    private TrajectorySequence blueAuto2_1;
-    private TrajectorySequence blueAuto2_2;
-    private TrajectorySequence blueAuto2_3;
-    private Pose2d blueStartPose2;
+    private TrajectorySequence blueAutoParking1_1;
+    private TrajectorySequence blueAutoParking1_2;
+    private TrajectorySequence blueAutoParking1_3;
+    private Pose2d blueStartPose1;
 
     @Override
     public void runOpMode() {
@@ -47,11 +47,14 @@ public final class AutoBlue2HighGoal extends LinearOpMode {
 
         initializeAutonomousTrajectories();
 
-        camera = robot.getLeftCamera();
+        camera = robot.getRightCamera();
         smartGamepad = new GamepadEx(gamepad1);
         ftcDashboard = FtcDashboard.getInstance();
+        telemetry = new MultipleTelemetry(telemetry, ftcDashboard.getTelemetry());
 
-        SignalSleevePipeline pipeline = new SignalSleevePipeline(SignalSleevePipeline.CameraOrientation.LEFT);
+        InterOpStorage.alliance = InterOpStorage.Alliance.BLUE;
+
+        SignalSleevePipeline pipeline = new SignalSleevePipeline(SignalSleevePipeline.CameraOrientation.RIGHT);
         initOpenCV(pipeline);
 
         while (!isStarted() && !isStopRequested()) {
@@ -61,54 +64,41 @@ public final class AutoBlue2HighGoal extends LinearOpMode {
             telemetry.addData("Cone filter averages: (G, M, O)", Arrays.toString(colorFilterAverages));
             telemetry.addData("Cone orientation: ", coneOrientation);
             telemetry.addData("FPS: ", camera.getFps());
+            telemetry.addData("left camera plugged in?", robot.isLeftCameraPluggedIn());
+            telemetry.addData("right camera plugged in?", robot.isRightCameraPluggedIn());
             telemetry.update();
             idle();
         }
 
-        drive.setPoseEstimate(blueStartPose2);
+        drive.setPoseEstimate(blueStartPose1);
         claw.grip();
         if (coneOrientation == SignalSleevePipeline.ConeOrientation.ONE) {
-            drive.followTrajectorySequence(blueAuto2_1);
+            drive.followTrajectorySequence(blueAutoParking1_1);
         }
         if (coneOrientation == SignalSleevePipeline.ConeOrientation.TWO) {
-            //drive.followTrajectorySequence(blueAuto2_2);
+            drive.followTrajectorySequence(blueAutoParking1_2);
         }
         if (coneOrientation == SignalSleevePipeline.ConeOrientation.THREE) {
-            //drive.followTrajectorySequence(blueAuto2_3);
+            drive.followTrajectorySequence(blueAutoParking1_3);
         }
+        InterOpStorage.currentPose = drive.getPoseEstimate();
     }
 
     private void initializeAutonomousTrajectories() {
-        blueStartPose2 = new Pose2d(-(1.5 * tileSize), 3 * tileSize - robot.width/2, Math.toRadians(0));
-        blueAuto2_1 = drive.trajectorySequenceBuilder(blueStartPose2)
+        blueStartPose1 = new Pose2d((1.5 * tileSize), 3 * tileSize - robot.width/2, Math.toRadians(0));
+        blueAutoParking1_1 = drive.trajectorySequenceBuilder(blueStartPose1)
+                .forward(tileSize)
+                .strafeRight(1.5*tileSize)
+                .build();
+
+        blueAutoParking1_2 = drive.trajectorySequenceBuilder(blueStartPose1)
+                .strafeRight(2*tileSize)
+                .build();
+
+        blueAutoParking1_3 = drive.trajectorySequenceBuilder(blueStartPose1)
                 .back(tileSize)
-                .addTemporalMarker(() -> {
-                    //
-                })
-                .forward(2.5)
-                .lineTo(new Vector2d( -2.5*tileSize + 2.5, tileSize/2))
-                .lineTo(new Vector2d(-3*tileSize + robot.length/2, tileSize/2))
-                .addTemporalMarker(() -> {
-                    // pick up next cone
-                    // tell linear mechanism to begin moving up, rotating as necessary
-                })
-                .waitSeconds(0.5)
-                .setReversed(false)
-                .lineTo(new Vector2d(-2*tileSize, tileSize/2))
-                .splineTo(new Vector2d(-tileSize - 6.9, 6.4), Math.toRadians(-42.5))
-                .setReversed(true)
-                .addTemporalMarker(() -> {
-
-                })
-                .waitSeconds(.5)
-                .splineTo(new Vector2d(-2*tileSize, tileSize/2), Math.toRadians(180))
-                .lineTo(new Vector2d( -2.5*tileSize + 2.5, tileSize/2))
-                .addTemporalMarker(() -> {
-
-                })
-                .waitSeconds(.5)
-                .setReversed(false)
-                . build();
+                .strafeRight(1.5*tileSize)
+                .build();
     }
 
     private void initOpenCV(OpenCvPipeline pipeline) {

@@ -1,0 +1,55 @@
+TrajectorySequence redAutoParking1_1 = robot.getDrive().trajectorySequenceBuilder(redStartPoseParking1)
+                .forward(tileSize)
+                .strafeRight(1.5*tileSize)
+                .build();
+
+        TrajectorySequence redAutoParking1_2 = robot.getDrive().trajectorySequenceBuilder(redStartPoseParking1)
+                .strafeRight(2*tileSize)
+                .build();
+
+        TrajectorySequence redAutoParking1_3 = robot.getDrive().trajectorySequenceBuilder(redStartPoseParking1)
+                .back(tileSize)
+                .strafeRight(1.5*tileSize)
+                .build();
+
+        TrajectorySequence redAutoParking2_1 = robot.getDrive().trajectorySequenceBuilder(redStartPoseParking2)
+                .forward(tileSize)
+                .strafeRight(1.5*tileSize)
+                .build();
+
+        TrajectorySequence redAutoParking2_2 = robot.getDrive().trajectorySequenceBuilder(redStartPoseParking2)
+                .strafeRight(2*tileSize)
+                .build();
+
+        TrajectorySequence redAutoParking2_3 = robot.getDrive().trajectorySequenceBuilder(redStartPoseParking2)
+                .back(tileSize)
+                .strafeRight(1.5*tileSize)
+                .build();
+
+        TrajectorySequence blueAutoParking1_1 = robot.getDrive().trajectorySequenceBuilder(blueStartPoseParking1)
+                .forward(tileSize)
+                .strafeRight(1.5*tileSize)
+                .build();
+
+        TrajectorySequence blueAutoParking1_2 = robot.getDrive().trajectorySequenceBuilder(blueStartPoseParking1)
+                .strafeRight(2*tileSize)
+                .build();
+
+        TrajectorySequence blueAutoParking1_3 = robot.getDrive().trajectorySequenceBuilder(blueStartPoseParking1)
+                .back(tileSize)
+                .strafeRight(1.5*tileSize)
+                .build();
+
+        TrajectorySequence blueAutoParking2_1 = robot.getDrive().trajectorySequenceBuilder(blueStartPoseParking2)
+                .forward(tileSize)
+                .strafeRight(1.5*tileSize)
+                .build();
+
+        TrajectorySequence blueAutoParking2_2 = robot.getDrive().trajectorySequenceBuilder(blueStartPoseParking2)
+                .strafeRight(2*tileSize)
+                .build();
+
+        TrajectorySequence blueAutoParking2_3 = robot.getDrive().trajectorySequenceBuilder(blueStartPoseParking2)
+                .back(tileSize)
+                .strafeRight(1.5*tileSize)
+                .build();

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -37,12 +37,12 @@ public final class BeeLineTeleOp extends LinearOpMode {
             double currentTime = getRuntime();
             double deltaTime = currentTime - prevTime;
             smartGamepad.update();
-            float LeftStickY = -1 * smartGamepad.left_stick_y * SpeedMultiplier;
-            float LeftStickX = smartGamepad.left_stick_x * SpeedMultiplier;
-            float RightStickY = -1 * smartGamepad.right_stick_y * SpeedMultiplier;
-            float RightStickX = smartGamepad.right_stick_x * SpeedMultiplier;
+            float LeftStickY = -1 * smartGamepad.leftStickY() * SpeedMultiplier;
+            float LeftStickX = smartGamepad.leftStickX() * SpeedMultiplier;
+            float RightStickY = -1 * smartGamepad.rightStickY() * SpeedMultiplier;
+            float RightStickX = smartGamepad.rightStickX() * SpeedMultiplier;
 
-            if (smartGamepad.start_pressed) {
+            if (smartGamepad.startPressed()) {
                 if (SpeedMultiplier == 0.5f) {
                     SpeedMultiplier = 1.0f;
                 } else {
@@ -50,11 +50,11 @@ public final class BeeLineTeleOp extends LinearOpMode {
                 }
             }
             // In case the flywheel defaults to the wrong direction :)
-            if (smartGamepad.y_pressed) {flywheelTargetSpeed *= -1;}
-            if (smartGamepad.dpad_up_pressed) {flywheelTargetSpeed += 500;}
-            if (smartGamepad.dpad_down_pressed) {flywheelTargetSpeed -= 500;}
-            if (smartGamepad.a_pressed) {flywheelOn = !flywheelOn;}
-            if (smartGamepad.right_trigger_pressed) {
+            if (smartGamepad.yPressed()) {flywheelTargetSpeed *= -1;}
+            if (smartGamepad.dpadUpPressed()) {flywheelTargetSpeed += 500;}
+            if (smartGamepad.dpadDownPressed()) {flywheelTargetSpeed -= 500;}
+            if (smartGamepad.aPressed()) {flywheelOn = !flywheelOn;}
+            if (smartGamepad.rightTriggerPressed()) {
                 telemetry.addLine("right trigger pressed");
                 if (pusherState == PusherState.IN) {
                     pusherState = PusherState.MOVING_OUT;
@@ -74,7 +74,7 @@ public final class BeeLineTeleOp extends LinearOpMode {
                     pusherState = PusherState.IN;
                 }
             }
-            if (smartGamepad.start_pressed) {
+            if (smartGamepad.startPressed()) {
                 if (SpeedMultiplier == 0.5f) {
                     SpeedMultiplier = 1.0f;
                 } else {

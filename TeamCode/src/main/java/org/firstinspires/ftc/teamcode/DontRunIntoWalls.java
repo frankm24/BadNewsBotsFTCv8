@@ -26,11 +26,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import badnewsbots.hardware.GamepadEx;
+import badnewsbots.hardware.UltrasonicSensor;
 import badnewsbots.ml.FTC_TFLiteObjectDetector;
 import badnewsbots.ml.YOLODarknetObjectDetector;
 import badnewsbots.robots.AutonomousTestingBot;
-import badnewsbots.slam.Map;
-import badnewsbots.slam.UltrasonicSensor;
+import badnewsbots.slam.Map2d;
 
 @Disabled
 @TeleOp
@@ -44,7 +44,7 @@ public final class DontRunIntoWalls extends LinearOpMode {
     FtcDashboard ftcDashboard;
 
     private List<Pose2d> initial_points;
-    private Map map;
+    private Map2d map2d;
 
     float speedMultiplier = 0.5f; //scale movement speed
     boolean openCVStreaming = false;
@@ -109,7 +109,7 @@ public final class DontRunIntoWalls extends LinearOpMode {
 
         ftcDashboard = FtcDashboard.getInstance();
 
-        map = new Map(new ArrayList<>(), DistanceUnit.INCH, 0.1);
+        map2d = new Map2d(new ArrayList<>(), DistanceUnit.INCH, 0.1);
         //15.25/2 + (1 + 15/16)
         telemetry.addLine("Camera stream loading...");
         telemetry.update();
@@ -161,15 +161,15 @@ public final class DontRunIntoWalls extends LinearOpMode {
         while (opModeIsActive()) {
             smartGamepad.update();
 
-            float LeftStickY = -1 * smartGamepad.left_stick_y * speedMultiplier;
-            float LeftStickX = smartGamepad.left_stick_x * speedMultiplier;
-            float RightStickY = -1 * smartGamepad.right_stick_y * speedMultiplier;
-            float RightStickX = smartGamepad.right_stick_x * speedMultiplier;
+            float LeftStickY = -1 * smartGamepad.leftStickY() * speedMultiplier;
+            float LeftStickX = smartGamepad.leftStickX() * speedMultiplier;
+            float RightStickY = -1 * smartGamepad.rightStickY() * speedMultiplier;
+            float RightStickX = smartGamepad.rightStickX() * speedMultiplier;
 
-            if (smartGamepad.dpad_up_pressed) {operationMode = OperationMode.DATA_COLLECTION;}
-            if (smartGamepad.dpad_left_pressed) {operationMode = OperationMode.AUTONOMOUS;}
-            if (smartGamepad.dpad_right_pressed) {operationMode = OperationMode.TFOD_TEST;}
-            if (smartGamepad.dpad_down_pressed) {operationMode = OperationMode.OPENCV_DNN_TEST;}
+            if (smartGamepad.dpadUpPressed()) {operationMode = OperationMode.DATA_COLLECTION;}
+            if (smartGamepad.dpadLeftPressed()) {operationMode = OperationMode.AUTONOMOUS;}
+            if (smartGamepad.dpadRightPressed()) {operationMode = OperationMode.TFOD_TEST;}
+            if (smartGamepad.dpadDownPressed()) {operationMode = OperationMode.OPENCV_DNN_TEST;}
 
             robot.drive.update();
             Pose2d current_pose = robot.drive.getPoseEstimate();
@@ -190,9 +190,9 @@ public final class DontRunIntoWalls extends LinearOpMode {
             else if (operationMode == OperationMode.DATA_COLLECTION) {
                 if (!(prev_pose == current_pose)) {
                     List<Vector2d> points = convertReadingsToPoints(readings);
-                    map.addPoints(points);
+                    map2d.addPoints(points);
                 }
-                List<Vector2d> points = map.getPoints();
+                List<Vector2d> points = map2d.getPoints();
 
                 double denominator = Math.max(Math.abs(LeftStickY) + Math.abs(LeftStickX) + Math.abs(RightStickX), 1);
                 double front_leftPower = (LeftStickY + LeftStickX + RightStickX) / denominator;
@@ -251,11 +251,11 @@ public final class DontRunIntoWalls extends LinearOpMode {
         }
         // Code after stop requested
         if (isStopRequested()) {
-            map.removeDuplicatePoints();
+            map2d.removeDuplicatePoints();
             String fileName = Environment.getExternalStorageDirectory() + "/Pictures/map.txt";
             try {
                 FileWriter fileWriter = new FileWriter(fileName);
-                fileWriter.write(map.getPointsAsTXT());
+                fileWriter.write(map2d.getPointsAsTXT());
                 fileWriter.close();
                 System.out.println("Map saved.");
             } catch (IOException e) {

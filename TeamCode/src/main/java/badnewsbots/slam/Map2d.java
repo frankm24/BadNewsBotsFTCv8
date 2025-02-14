@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class Map {
+public class Map2d {
     private double DUPLICATE_THRESHOLD;
     private List<Vector2d> points;
     private List<Vector2d> last_points;
@@ -24,7 +24,7 @@ public class Map {
     private final char CHARACTER_POINTER = '^';
     private final double[] point_color = new double[] {31, 0, 0};
 
-    public Map(List<Vector2d> initial_points, DistanceUnit unit, double thresh) {
+    public Map2d(List<Vector2d> initial_points, DistanceUnit unit, double thresh) {
         points = initial_points;
         last_points = new ArrayList<>();
         this.unit = unit;
@@ -138,7 +138,7 @@ public class Map {
             double y_rel = point.getY();
             int mapped_x = (int) Math.round(map(x_rel, -half_img_side_length, half_img_side_length, 0, img_side_length));
             int mapped_y = (int) Math.round(map(y_rel, -half_img_side_length, half_img_side_length, 0, img_side_length));
-            RGB_map.put(mapped_y, mapped_y, point_color);
+            RGB_map.put(mapped_x, mapped_y, point_color);
         }
         Imgproc.circle(RGB_map, img_center_point, 5, new Scalar(point_color), Imgproc.FILLED);
         return RGB_map;

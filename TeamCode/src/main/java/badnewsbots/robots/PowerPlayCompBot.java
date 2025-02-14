@@ -1,9 +1,10 @@
 package badnewsbots.robots;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -20,52 +21,62 @@ public final class PowerPlayCompBot {
     private Telemetry telemetry;
 
     public final double length = 15.0;
-    public final double width = 14.6;
+    public final double width = 16.25;
     private final PowerPlayCompBotMecanumDrive drive;
-    private final OpenCvWebcam rightCamera;
-    private final OpenCvWebcam leftCamera;
+    private  OpenCvWebcam rightCamera;
+    private  OpenCvWebcam leftCamera;
+    private final VoltageSensor voltageSensor;
+
+    private boolean leftCameraPluggedIn = false;
+    private boolean rightCameraPluggedIn = false;
 
     // Mechanisms
     private final RotatingClaw rotatingClaw;
+    private final RevBlinkinLedDriver ledDriver;
 
     public PowerPlayCompBot(OpMode opMode) {
         this.opMode = opMode;
         hardwareMap = opMode.hardwareMap;
         telemetry = opMode.telemetry;
-        // Enables automatic "bulk reads" from robot hardware, so multiple .get()'s on hardware
+        // Enables automatic "bulk reads" from robot hardware, so multiple encoder .get()'s are combined into for the lynx module
         // Should improve performance significantly, since hardwareMap read calls take 2ms each
         for (LynxModule module : hardwareMap.getAll( LynxModule.class ) )
             module.setBulkCachingMode( LynxModule.BulkCachingMode.AUTO );
 
-        // Sensors
-        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
-
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-
-        parameters.mode                = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled      = false;
-        imu.initialize(parameters);
-
         drive = new PowerPlayCompBotMecanumDrive(hardwareMap);
-
         rotatingClaw = new RotatingClaw(hardwareMap, telemetry);
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
         // Cameras
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        WebcamName webcamName1 = hardwareMap.get(WebcamName.class, "Webcam 1");
-        leftCamera = OpenCvCameraFactory.getInstance().createWebcam(webcamName1);
+        try {
+            WebcamName webcamName1 = hardwareMap.get(WebcamName.class, "Webcam 1");
+            leftCamera = OpenCvCameraFactory.getInstance().createWebcam(webcamName1);
+            leftCameraPluggedIn = true;
+        } catch (Exception e) {
+            leftCameraPluggedIn = false;
+        }
+        try {
+            WebcamName webcamName2 = hardwareMap.get(WebcamName.class, "Webcam 2");
+            rightCamera = OpenCvCameraFactory.getInstance().createWebcam(webcamName2);
+            rightCameraPluggedIn = true;
+        } catch (Exception e) {
+            rightCameraPluggedIn = false;
+        }
 
-        WebcamName webcamName2 = hardwareMap.get(WebcamName.class, "Webcam 2");
-        rightCamera = OpenCvCameraFactory.getInstance().createWebcam(webcamName2);
-
+        ledDriver = hardwareMap.get(RevBlinkinLedDriver.class, "led_driver");
         //telemetry.addLine("Robot object created");
         //telemetry.update();
     }
 
+    public boolean isLeftCameraPluggedIn() {
+        return leftCameraPluggedIn;
+    }
+    public boolean isRightCameraPluggedIn() {
+        return rightCameraPluggedIn;
+    }
     public PowerPlayCompBotMecanumDrive getDrive() {return drive;}
     public OpenCvWebcam getLeftCamera() {return leftCamera;}
     public OpenCvWebcam getRightCamera() {return rightCamera;}
     public RotatingClaw getRotatingClaw() {return rotatingClaw;}
-
+    public RevBlinkinLedDriver getLedDriver() {return ledDriver;}
 }

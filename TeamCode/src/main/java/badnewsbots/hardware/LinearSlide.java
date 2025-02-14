@@ -11,6 +11,9 @@ public class LinearSlide {
     private final int encoderDirection;
     private int adjustedZeroPosition = 0;
     private int adjustedMaxPosition;
+    private float lastPositionInches = 0;
+    private int targetPositionTicks;
+    private boolean powerCut = false;
 
     public LinearSlide(DcMotorEx motor, float lengthIn, int lengthTicks, boolean negateTicks) {
         this.motor = motor;
@@ -30,6 +33,10 @@ public class LinearSlide {
         adjustedMaxPosition = encoderDirection * LENGTH_TICKS + adjustedZeroPosition;
     }
 
+    public void zeroAndMoveToAdjLastPosIn() {
+        zero();
+        moveToPositionInches(lastPositionInches);
+    }
     // Tell the slide to move to a given position in ticks
     public void moveToPositionTicks(int positionTicks) {
         if (adjustedZeroPosition > adjustedMaxPosition) {
@@ -37,27 +44,25 @@ public class LinearSlide {
         } else {
             positionTicks = Math.max(adjustedZeroPosition, Math.min(positionTicks, adjustedMaxPosition));
         }
+        targetPositionTicks = positionTicks;
         motor.setTargetPosition(positionTicks);
         motor.setPower(1);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void incrementPositionTicks(int amount) {
-        int currentPosition = motor.getCurrentPosition();
-        int requestedPosition = currentPosition + amount;
-        int targetPosition = Math.min(requestedPosition, adjustedMaxPosition);
-        motor.setTargetPosition(encoderDirection * targetPosition);
+        int newPosition = targetPositionTicks + amount * encoderDirection;
+        moveToPositionTicks(Math.round(newPosition + adjustedZeroPosition));
     }
 
     public void decrementPositionTicks(int amount) {
-        int currentPosition = motor.getCurrentPosition();
-        int requestedPosition = currentPosition - amount;
-        int targetPosition = Math.max(adjustedZeroPosition, requestedPosition);
-        motor.setTargetPosition(encoderDirection * targetPosition);
+        int newPosition = targetPositionTicks - amount * encoderDirection;
+        moveToPositionTicks(Math.round(newPosition + adjustedZeroPosition));
     }
 
     public void moveToPositionInches(float positionInches) {
         positionInches = Math.max(0, Math.min(positionInches, LENGTH_IN));
+        lastPositionInches = positionInches;
         int targetPosition = Math.round(positionInches * MOTOR_TICKS_PER_INCH * encoderDirection + adjustedZeroPosition);
         moveToPositionTicks(targetPosition);
     }

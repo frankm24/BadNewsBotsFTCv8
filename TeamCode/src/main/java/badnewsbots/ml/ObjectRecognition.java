@@ -4,6 +4,7 @@ package badnewsbots.ml;
 
 import org.opencv.core.Point;
 
+// This class represents an object detected in image space in a single image or frame of video.
 public class ObjectRecognition {
 
     private int objectClassId;

@@ -2,6 +2,9 @@ package badnewsbots.pipelines;
 
 import android.os.Environment;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -12,6 +15,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+@Config
 public class SignalSleevePipeline extends OpenCvPipeline {
     private final boolean returnResult = true;
     private final boolean saveImage = false;
@@ -45,14 +49,17 @@ public class SignalSleevePipeline extends OpenCvPipeline {
     private final Scalar magenta = new Scalar(255, 0, 255);
     private final Scalar orange = new Scalar(255, 127, 0);
 
-    private final Point point1Right = new Point(280, 360);
-    private final Point point2Right = new Point(450, 480);
+    private Point point1Right = new Point(300, 440);
+    private Point point2Right = new Point(430, 350);
     private final Rect roiRight = new Rect(point1Right, point2Right);
 
-    private final Point point1Left = new Point(280, 360);
-    private final Point point2Left = new Point(450, 480);
+    private Point point1Left = new Point(365, 350);
+    private Point point2Left = new Point(480, 240);
     private final Rect roiLeft = new Rect(point1Left, point2Left);
     private final Rect roiToUse;
+
+    private RevBlinkinLedDriver ledDriver;
+    private boolean useLedStatusIndicator;
 
     private int greenCount;
     private int magentaCount;
@@ -69,6 +76,13 @@ public class SignalSleevePipeline extends OpenCvPipeline {
         this.cameraOrientation = cameraOrientation;
         if (cameraOrientation == CameraOrientation.RIGHT) roiToUse = roiRight;
         else roiToUse = roiLeft;
+        useLedStatusIndicator = false;
+    }
+
+    public SignalSleevePipeline(CameraOrientation cameraOrientation, RevBlinkinLedDriver ledDriver) {
+        this(cameraOrientation);
+        this.useLedStatusIndicator = true;
+        this.ledDriver = ledDriver;
     }
 
     @Override
@@ -98,14 +112,19 @@ public class SignalSleevePipeline extends OpenCvPipeline {
 
         double maxMean = Math.max(magentaCount, Math.max(greenCount, orangeCount));
 
+        RevBlinkinLedDriver.BlinkinPattern currentPattern;
         if (maxMean == greenCount) {
             coneOrientation = ConeOrientation.ONE;
+            currentPattern = RevBlinkinLedDriver.BlinkinPattern.LIME;
         } else if (maxMean == magentaCount) {
             coneOrientation = ConeOrientation.TWO;
+            currentPattern = RevBlinkinLedDriver.BlinkinPattern.HOT_PINK;
         } else if (maxMean == orangeCount) {
             coneOrientation = ConeOrientation.THREE;
+            currentPattern = RevBlinkinLedDriver.BlinkinPattern.ORANGE;
         } else {
             coneOrientation = ConeOrientation.NONE;
+            currentPattern = RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_RED;
         }
 
         // Code to visualize results (NOT vital)
@@ -114,7 +133,10 @@ public class SignalSleevePipeline extends OpenCvPipeline {
         input.setTo(orange, orangeFiltered);
         Imgproc.rectangle(input, roiToUse, roiOutlineColor, 3);
 
-        if (saveImage) {Imgcodecs.imwrite(Environment.getExternalStorageDirectory() + "/signal.png", hsvImage);}
+        if (useLedStatusIndicator) {
+            ledDriver.setPattern(currentPattern);
+        }
+        if (saveImage) Imgcodecs.imwrite(Environment.getExternalStorageDirectory() + "/signal.png", hsvImage);
 
         if (returnResult) {return input;} else {return input;}
     }

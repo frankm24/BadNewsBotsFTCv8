@@ -12,6 +12,7 @@ import org.opencv.core.Point3;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: Only 10% coded!!!!
 public class ImageSpaceToFieldConverter {
     private Mat cameraMatrix, rotationVector, rotationMatrix,
     translationVector, extrinsicMatrix, projectionMatrix, inverseHomographyMatrix;

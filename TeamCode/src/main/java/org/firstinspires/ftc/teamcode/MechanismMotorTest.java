@@ -10,8 +10,9 @@ import java.util.List;
 
 import badnewsbots.hardware.GamepadEx;
 
+// This OpMode acts as a tool for testing the control of DC motors using the REV Control Hub as part of a mechanical subsystem of a robot.
 @TeleOp(group = "Testing")
-public final class EpicMotorTest extends LinearOpMode {
+public final class MechanismMotorTest extends LinearOpMode {
     private DcMotorEx motor;
     private DcMotorEx motor1;
     private GamepadEx smartGamepad;
@@ -40,7 +41,9 @@ public final class EpicMotorTest extends LinearOpMode {
         motorTargetPosition = 0;
         currentTestMode = TestMode.POWER;
 
-        telemetry.addLine("Initialized.");
+        telemetry.addLine("Press Y to toggle test mode between POWER (pure PWM control) and POSITION (encoders + motor driver built-in PIDF)");
+        telemetry.addLine("POWER mode: Press DPAD UP/DOWN to inc/dec power, press A to set power to 0, and press B to set power to -0.1");
+        telemetry.addLine("POSITION mode: Press DPAD UP/DOWN to inc/dec target pos., press A to set target pos. to 0");
         for (int i = 0; i < motorsToTest.size(); i++) {
             telemetry.addData("Motor " + i + " PIDF Coeffs: ", motor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
         }
@@ -51,7 +54,7 @@ public final class EpicMotorTest extends LinearOpMode {
         while (opModeIsActive()) {
             smartGamepad.update();
 
-            if (smartGamepad.y_pressed) {
+            if (smartGamepad.yPressed()) {
                 if (currentTestMode == TestMode.POWER) {
                     currentTestMode = TestMode.POSITION;
                     for (DcMotorEx motor : motorsToTest) {
@@ -68,29 +71,29 @@ public final class EpicMotorTest extends LinearOpMode {
                 }
             }
             if (currentTestMode == TestMode.POWER) {
-                if (smartGamepad.dpad_up) {
+                if (smartGamepad.dpadUp()) {
                     motorPower += 0.01;
                 }
-                if (smartGamepad.dpad_down) {
+                if (smartGamepad.dpadDown()) {
                     motorPower -= 0.01;
                 }
-                if (smartGamepad.a_pressed) {
+                if (smartGamepad.aPressed()) {
                     motorPower = 0;
                 }
-                if (smartGamepad.b_pressed) {
+                if (smartGamepad.bPressed()) {
                     motorPower = -0.1;
                 }
                 for (DcMotorEx motor : motorsToTest) {
                     motor.setPower(motorPower);
                 }
             } else {
-                if (smartGamepad.dpad_up) {
+                if (smartGamepad.dpadUp()) {
                     motorTargetPosition = Math.min(motorTargetPosition + 2, maxTicks);
                 }
-                if (smartGamepad.dpad_down) {
+                if (smartGamepad.dpadDown()) {
                     motorTargetPosition = Math.max(motorTargetPosition - 2, minTicks);
                 }
-                if (smartGamepad.a_pressed) {
+                if (smartGamepad.aPressed()) {
                     motorTargetPosition = 0;
                 }
                 for (DcMotorEx motor : motorsToTest) {

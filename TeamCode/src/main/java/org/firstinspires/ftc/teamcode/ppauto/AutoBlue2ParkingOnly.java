@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.ppauto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -13,13 +14,14 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.Arrays;
 
+import badnewsbots.InterOpStorage;
 import badnewsbots.hardware.GamepadEx;
 import badnewsbots.hardware.RotatingClaw;
 import badnewsbots.pipelines.SignalSleevePipeline;
 import badnewsbots.robots.PowerPlayCompBot;
 
 @Autonomous
-public final class AutoBlue1ParkingOnly extends LinearOpMode {
+public final class AutoBlue2ParkingOnly extends LinearOpMode {
 
     private PowerPlayCompBot robot;
     private GamepadEx smartGamepad;
@@ -32,10 +34,10 @@ public final class AutoBlue1ParkingOnly extends LinearOpMode {
     private final double tileSize = 23.5;
     private OpenCvCamera camera;
 
-    private TrajectorySequence blueAutoParking1_1;
-    private TrajectorySequence blueAutoParking1_2;
-    private TrajectorySequence blueAutoParking1_3;
-    private Pose2d blueStartPose1;
+    private TrajectorySequence blueAutoParking2_1;
+    private TrajectorySequence blueAutoParking2_2;
+    private TrajectorySequence blueAutoParking2_3;
+    private Pose2d blueStartPose2;
 
     @Override
     public void runOpMode() {
@@ -48,9 +50,12 @@ public final class AutoBlue1ParkingOnly extends LinearOpMode {
         camera = robot.getRightCamera();
         smartGamepad = new GamepadEx(gamepad1);
         ftcDashboard = FtcDashboard.getInstance();
+        telemetry = new MultipleTelemetry(telemetry, ftcDashboard.getTelemetry());
 
         SignalSleevePipeline pipeline = new SignalSleevePipeline(SignalSleevePipeline.CameraOrientation.RIGHT);
         initOpenCV(pipeline);
+
+        InterOpStorage.alliance = InterOpStorage.Alliance.BLUE;
 
         while (!isStarted() && !isStopRequested()) {
             coneOrientation = pipeline.getConeOrientation();
@@ -59,35 +64,38 @@ public final class AutoBlue1ParkingOnly extends LinearOpMode {
             telemetry.addData("Cone filter averages: (G, M, O)", Arrays.toString(colorFilterAverages));
             telemetry.addData("Cone orientation: ", coneOrientation);
             telemetry.addData("FPS: ", camera.getFps());
+            telemetry.addData("left camera plugged in?", robot.isLeftCameraPluggedIn());
+            telemetry.addData("right camera plugged in?", robot.isRightCameraPluggedIn());
             telemetry.update();
             idle();
         }
 
-        drive.setPoseEstimate(blueStartPose1);
+        drive.setPoseEstimate(blueStartPose2);
         claw.grip();
         if (coneOrientation == SignalSleevePipeline.ConeOrientation.ONE) {
-            drive.followTrajectorySequence(blueAutoParking1_1);
+            drive.followTrajectorySequence(blueAutoParking2_1);
         }
         if (coneOrientation == SignalSleevePipeline.ConeOrientation.TWO) {
-            drive.followTrajectorySequence(blueAutoParking1_2);
+            drive.followTrajectorySequence(blueAutoParking2_2);
         }
         if (coneOrientation == SignalSleevePipeline.ConeOrientation.THREE) {
-            drive.followTrajectorySequence(blueAutoParking1_3);
+            drive.followTrajectorySequence(blueAutoParking2_3);
         }
+        InterOpStorage.currentPose = drive.getPoseEstimate();
     }
 
     private void initializeAutonomousTrajectories() {
-        blueStartPose1 = new Pose2d((1.5 * tileSize), 3 * tileSize - robot.width/2, Math.toRadians(0));
-        blueAutoParking1_1 = drive.trajectorySequenceBuilder(blueStartPose1)
+        blueStartPose2 = new Pose2d(-(1.5 * tileSize), 3 * tileSize - robot.width/2, Math.toRadians(0));
+        blueAutoParking2_1 = drive.trajectorySequenceBuilder(blueStartPose2)
                 .forward(tileSize)
                 .strafeRight(1.5*tileSize)
                 .build();
 
-        blueAutoParking1_2 = drive.trajectorySequenceBuilder(blueStartPose1)
+        blueAutoParking2_2 = drive.trajectorySequenceBuilder(blueStartPose2)
                 .strafeRight(2*tileSize)
                 .build();
 
-        blueAutoParking1_3 = drive.trajectorySequenceBuilder(blueStartPose1)
+        blueAutoParking2_3 = drive.trajectorySequenceBuilder(blueStartPose2)
                 .back(tileSize)
                 .strafeRight(1.5*tileSize)
                 .build();

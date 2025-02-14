@@ -1,4 +1,4 @@
-package badnewsbots.slam;
+package badnewsbots.hardware;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
@@ -27,4 +27,5 @@ public class UltrasonicSensor {
     public void setPosition(Pose2d position) {
         this.position = position;
     }
+
 }

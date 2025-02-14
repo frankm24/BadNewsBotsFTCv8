@@ -30,6 +30,7 @@ public final class EpicServoTest extends LinearOpMode {
         servo1 = hardwareMap.get(Servo.class, "wrist");
         servosToTest.add(servo);
         servosToTest.add(servo1);
+        currentServo = servo;
 
         telemetry.addLine("Initialized.");
         telemetry.update();
@@ -39,7 +40,7 @@ public final class EpicServoTest extends LinearOpMode {
         while (opModeIsActive()) {
             smartGamepad.update();
 
-            if (smartGamepad.y_pressed) {
+            if (smartGamepad.yPressed()) {
                 if (servoListIterator.hasNext()) {
                     currentServo = servoListIterator.next();
                 } else {
@@ -47,13 +48,13 @@ public final class EpicServoTest extends LinearOpMode {
                     currentServo = servoListIterator.next();
                 }
             }
-            if (smartGamepad.a_pressed) {
+            if (smartGamepad.aPressed()) {
                 currentTargetPosition = 0;
             }
-            if (smartGamepad.dpad_up_pressed) {
+            if (smartGamepad.dpadUpPressed()) {
                 currentTargetPosition = Math.min(currentTargetPosition + SERVO_INC, SERVO_MAX_POS);
             }
-            if (smartGamepad.dpad_down_pressed) {
+            if (smartGamepad.dpadDownPressed()) {
                 currentTargetPosition = Math.max(0, currentTargetPosition - SERVO_INC);
             }
 

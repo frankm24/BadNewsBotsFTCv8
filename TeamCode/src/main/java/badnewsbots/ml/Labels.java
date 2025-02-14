@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
+// Encapsulates functions for reading annoying label.txt standards for ML models
 public class Labels {
     public static String[] getStringArray(ArrayList<String> arr) {
         // declaration and initialize String Array

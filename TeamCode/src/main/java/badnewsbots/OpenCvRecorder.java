@@ -10,7 +10,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import badnewsbots.pipelines.RecordingPipeline;
 
-public class OpenCvRecorder {
+public final class OpenCvRecorder {
     private final OpenCvWebcam camera;
     private final RecordingPipeline pipeline;
     private final Telemetry telemetry;

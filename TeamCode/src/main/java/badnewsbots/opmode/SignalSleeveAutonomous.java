@@ -1,8 +1,5 @@
 package badnewsbots.opmode;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.PowerPlayCompBotMecanumDrive;
@@ -13,43 +10,46 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.Arrays;
 
-import badnewsbots.hardware.GamepadEx;
+import badnewsbots.hardware.RotatingClaw;
 import badnewsbots.pipelines.SignalSleevePipeline;
 import badnewsbots.robots.PowerPlayCompBot;
 
+// This abstract class defines the logic behind an autonomous program which detects the orientation of the signal sleeve
+// (1, 2, or 3), and follows the corresponding RoadRunnerTrajectorySequence (which must be provided when this class is extended),
+// executing the correct autonomous plan.
 public abstract class SignalSleeveAutonomous extends LinearOpMode {
-    private PowerPlayCompBot robot;
-    private GamepadEx smartGamepad;
-    private FtcDashboard ftcDashboard;
+    protected PowerPlayCompBot robot;
     private SignalSleevePipeline.ConeOrientation coneOrientation;
-    private double[] colorFilterAverages;
-    private PowerPlayCompBotMecanumDrive drive;
+    protected PowerPlayCompBotMecanumDrive drive;
+    protected RotatingClaw claw;
 
-    private final double tileSize = 24.0;
+    protected final double tileSize = 23.5;
     private OpenCvCamera camera;
 
-    private TrajectorySequence trajectory1;
-    private TrajectorySequence trajectory2;
-    private TrajectorySequence trajectory3;
-    private Pose2d startPose;
+    protected TrajectorySequence trajectory1;
+    protected TrajectorySequence trajectory2;
+    protected TrajectorySequence trajectory3;
+    protected SignalSleevePipeline.CameraOrientation cameraOrientation;
 
     @Override
     public void runOpMode() {
         robot = new PowerPlayCompBot(this);
         drive = robot.getDrive();
+        claw = robot.getRotatingClaw();
+
+        if (cameraOrientation == SignalSleevePipeline.CameraOrientation.RIGHT)
+            camera = robot.getRightCamera();
+        else if (cameraOrientation == SignalSleevePipeline.CameraOrientation.LEFT)
+            camera = robot.getLeftCamera();
 
         initializeAutonomousTrajectories();
 
-        camera = robot.getRightCamera();
-        smartGamepad = new GamepadEx(gamepad1);
-        ftcDashboard = FtcDashboard.getInstance();
-
-        SignalSleevePipeline pipeline = new SignalSleevePipeline(SignalSleevePipeline.CameraOrientation.RIGHT );
+        SignalSleevePipeline pipeline = new SignalSleevePipeline(cameraOrientation);
         initOpenCV(pipeline);
 
         while (!isStarted() && !isStopRequested()) {
             coneOrientation = pipeline.getConeOrientation();
-            colorFilterAverages = pipeline.getFilterAverages();
+            double[] colorFilterAverages = pipeline.getFilterAverages();
             telemetry.addData("Status: ", "Initialized");
             telemetry.addData("Cone filter averages: (G, M, O)", Arrays.toString(colorFilterAverages));
             telemetry.addData("Cone orientation: ", coneOrientation);
@@ -57,6 +57,8 @@ public abstract class SignalSleeveAutonomous extends LinearOpMode {
             telemetry.update();
             idle();
         }
+
+        preTrajectory();
 
         if (coneOrientation == SignalSleevePipeline.ConeOrientation.ONE) {
             drive.followTrajectorySequence(trajectory1);
@@ -67,28 +69,13 @@ public abstract class SignalSleeveAutonomous extends LinearOpMode {
         if (coneOrientation == SignalSleevePipeline.ConeOrientation.THREE) {
             drive.followTrajectorySequence(trajectory3);
         }
+
+        postTrajectory();
     }
 
-    private void initializeAutonomousTrajectories() {
-        startPose = new Pose2d(-1.5 * tileSize, -3 * tileSize + robot.width/2, Math.toRadians(0));
-
-        trajectory1 = robot.getDrive().trajectorySequenceBuilder(startPose)
-                .setReversed(true)
-                .splineTo(new Vector2d(startPose.getX() - tileSize, startPose.getY() + tileSize + robot.length/2),
-                        Math.toRadians(90))
-                .setReversed(false)
-                .build();
-
-        trajectory2 = robot.getDrive().trajectorySequenceBuilder(startPose)
-                .setReversed(true)
-                .strafeLeft(1 * tileSize + robot.width/2)
-                .build();
-
-        trajectory3 = robot.getDrive().trajectorySequenceBuilder(startPose)
-                .splineTo(new Vector2d(startPose.getX() + tileSize, startPose.getY() + tileSize + robot.length/2),
-                        Math.toRadians(90))
-                .build();
-    }
+    protected abstract void initializeAutonomousTrajectories();
+    protected abstract void preTrajectory();
+    protected abstract void postTrajectory();
 
     private void initOpenCV(OpenCvPipeline pipeline) {
         camera.setPipeline(pipeline);
